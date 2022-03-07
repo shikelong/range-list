@@ -1,11 +1,11 @@
 import { RangeList } from "./RangeList";
+import { RangesRelation } from "./types";
 
 describe("RangeList", () => {
   it("add and remove behavior should be correct", () => {
     const consoleLogMock = jest
       .spyOn(console, "log")
       .mockImplementationOnce(() => {});
-
     const rl = new RangeList();
     rl.add([1, 5]);
     rl.print();
@@ -39,9 +39,136 @@ describe("RangeList", () => {
     expect(console.log).toHaveBeenLastCalledWith("[1, 3) [19, 21)");
   });
 
-  it("add method should ignore invalid input", () => {});
+  it("add method should ignore/throw invalid input", () => {
+    const rl = new RangeList([]);
 
-  it("remove method should ignore invalid input", () => {});
+    rl.add([3, 3]);
+    rl.add([-2, 4]);
+    expect(() => rl.add([1.2, 3])).toThrow();
+    expect(() => rl.add([20, 3])).toThrow();
+    rl.print();
+    expect(console.log).toHaveBeenLastCalledWith("[-2, 4)");
+  });
 
-  it("initialize should correct", () => {});
+  it("remove method should ignore/throw invalid input", () => {
+    const rl = new RangeList([
+      [1, 5],
+      [10, 20],
+      [22, 30],
+      [52, 64],
+    ]);
+    rl.print();
+    expect(console.log).toHaveBeenLastCalledWith(
+      "[1, 5) [10, 20) [22, 30) [52, 64)"
+    );
+    expect(() => rl.remove([5, 1])).toThrow();
+    rl.remove([3, 3]);
+
+    rl.remove([100, 200]);
+    rl.print();
+    expect(console.log).toHaveBeenLastCalledWith(
+      "[1, 5) [10, 20) [22, 30) [52, 64)"
+    );
+  });
+
+  it("initialize should correct", () => {
+    const consoleLogMock = jest
+      .spyOn(console, "log")
+      .mockImplementationOnce(() => {});
+
+    const rl = new RangeList([
+      [52, 64],
+      [1, 5],
+      [10, 20],
+      [22, 30],
+      [3, 3],
+      [3, 15],
+    ]);
+    rl.print();
+    expect(console.log).toHaveBeenLastCalledWith("[1, 20) [22, 30) [52, 64)");
+  });
+
+  it("add behavior should be ok", () => {
+    const consoleLogMock = jest
+      .spyOn(console, "log")
+      .mockImplementationOnce(() => {});
+
+    const rl = new RangeList();
+    rl.print();
+    expect(console.log).toHaveBeenLastCalledWith("");
+    rl.add([1, 5]);
+    rl.print();
+    expect(console.log).toHaveBeenLastCalledWith("[1, 5)");
+    rl.add([20, 20]);
+    rl.print();
+    expect(console.log).toHaveBeenLastCalledWith("[1, 5)");
+
+    rl.add([18, 25]);
+    rl.print();
+    expect(console.log).toHaveBeenLastCalledWith("[1, 5) [18, 25)");
+
+    rl.add([3, 15]);
+    rl.print();
+    expect(console.log).toHaveBeenLastCalledWith("[1, 15) [18, 25)");
+  });
+
+  it("remove behavior should be ok", () => {
+    const consoleLogMock = jest
+      .spyOn(console, "log")
+      .mockImplementationOnce(() => {});
+
+    const rl = new RangeList([
+      [1, 5],
+      [10, 20],
+      [22, 30],
+      [52, 64],
+    ]);
+    rl.print();
+    expect(console.log).toHaveBeenLastCalledWith(
+      "[1, 5) [10, 20) [22, 30) [52, 64)"
+    );
+    rl.remove([1, 5]);
+    rl.print();
+    expect(console.log).toHaveBeenLastCalledWith("[10, 20) [22, 30) [52, 64)");
+    rl.remove([20, 20]);
+    rl.print();
+    expect(console.log).toHaveBeenLastCalledWith("[10, 20) [22, 30) [52, 64)");
+
+    rl.remove([18, 25]);
+    rl.print();
+    expect(console.log).toHaveBeenLastCalledWith("[10, 18) [25, 30) [52, 64)");
+  });
+
+  describe("utils", () => {
+    it("getRangeRelation", () => {
+      expect(RangeList.getRangeRelation([1, 4], [2, 5])).toBe(
+        RangesRelation.RightCross
+      );
+      expect(RangeList.getRangeRelation([1, 2], [4, 5])).toBe(
+        RangesRelation.Less
+      );
+      expect(RangeList.getRangeRelation([5, 8], [2, 3])).toBe(
+        RangesRelation.Greater
+      );
+      expect(RangeList.getRangeRelation([1, 3], [3, 5])).toBe(
+        RangesRelation.RightCross
+      );
+      expect(RangeList.getRangeRelation([3, 5], [1, 3])).toBe(
+        RangesRelation.LeftCross
+      );
+      expect(RangeList.getRangeRelation([1, 10], [2, 5])).toBe(
+        RangesRelation.Include
+      );
+      expect(RangeList.getRangeRelation([2, 5], [1, 10])).toBe(
+        RangesRelation.BeIncluded
+      );
+      expect(RangeList.getRangeRelation([2, 5], [1, 4])).toBe(
+        RangesRelation.LeftCross
+      );
+
+      expect(RangeList.getRangeRelation([5, 8], [5, 8])).toBe(
+        RangesRelation.Equal
+      );
+    });
+  });
 });
