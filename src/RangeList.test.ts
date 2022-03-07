@@ -6,8 +6,6 @@ describe("RangeList", () => {
       .spyOn(console, "log")
       .mockImplementationOnce(() => {});
 
-    const r1 = new RangeList();
-
     const rl = new RangeList();
     rl.add([1, 5]);
     rl.print();
