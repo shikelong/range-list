@@ -2,6 +2,16 @@ import { RangeList } from "./RangeList";
 import { RangesRelation } from "./types";
 
 describe("RangeList", () => {
+  it("empty list should be printed correctly", () => {
+    const consoleLogMock = jest
+      .spyOn(console, "log")
+      .mockImplementationOnce(() => {});
+    const rl = new RangeList();
+    rl.print();
+    expect(console.log).toHaveBeenLastCalledWith("");
+  });
+
+  //Note: this test case copy from homework'pdf
   it("add and remove behavior should be correct", () => {
     const consoleLogMock = jest
       .spyOn(console, "log")
