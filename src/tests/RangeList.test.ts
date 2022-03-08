@@ -1,5 +1,4 @@
-import { RangeList } from "./RangeList";
-import { RangesRelation } from "./types";
+import { RangeList } from "../RangeList";
 
 describe("RangeList", () => {
   it("empty list should be printed correctly", () => {
@@ -120,6 +119,10 @@ describe("RangeList", () => {
     rl.add([3, 15]);
     rl.print();
     expect(console.log).toHaveBeenLastCalledWith("[1, 15) [18, 25)");
+
+    rl.add([-2, 100]);
+    rl.print();
+    expect(console.log).toHaveBeenLastCalledWith("[-2, 100)");
   });
 
   it("remove behavior should be ok", () => {
@@ -147,38 +150,9 @@ describe("RangeList", () => {
     rl.remove([18, 25]);
     rl.print();
     expect(console.log).toHaveBeenLastCalledWith("[10, 18) [25, 30) [52, 64)");
-  });
 
-  describe("utils", () => {
-    it("getRangeRelation", () => {
-      expect(RangeList.getRangeRelation([1, 4], [2, 5])).toBe(
-        RangesRelation.RightCross
-      );
-      expect(RangeList.getRangeRelation([1, 2], [4, 5])).toBe(
-        RangesRelation.Less
-      );
-      expect(RangeList.getRangeRelation([5, 8], [2, 3])).toBe(
-        RangesRelation.Greater
-      );
-      expect(RangeList.getRangeRelation([1, 3], [3, 5])).toBe(
-        RangesRelation.RightCross
-      );
-      expect(RangeList.getRangeRelation([3, 5], [1, 3])).toBe(
-        RangesRelation.LeftCross
-      );
-      expect(RangeList.getRangeRelation([1, 10], [2, 5])).toBe(
-        RangesRelation.Include
-      );
-      expect(RangeList.getRangeRelation([2, 5], [1, 10])).toBe(
-        RangesRelation.BeIncluded
-      );
-      expect(RangeList.getRangeRelation([2, 5], [1, 4])).toBe(
-        RangesRelation.LeftCross
-      );
-
-      expect(RangeList.getRangeRelation([5, 8], [5, 8])).toBe(
-        RangesRelation.Equal
-      );
-    });
+    rl.remove([0, 100]);
+    rl.print();
+    expect(console.log).toHaveBeenLastCalledWith("");
   });
 });

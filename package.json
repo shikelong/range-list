@@ -6,7 +6,9 @@
   "scripts": {
     "build": "rimraf dist && tsc",
     "test": "jest src",
-    "prepare": "npm run build"
+    "test:coverage": "jest --coverage=true",
+    "prepare": "npm run build",
+    "example": "node ./example.js"
   },
   "repository": {
     "type": "git",
